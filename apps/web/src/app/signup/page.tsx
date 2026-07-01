@@ -2,6 +2,7 @@
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
 
 interface SignupForm {
   organizationName: string;
@@ -49,58 +50,56 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold">Create your workspace</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
+    <AuthShell
+      title="Create your workspace"
+      subtitle="Set up your business on Atithira in minutes"
+      footer={
+        <>
+          Already have an account?{" "}
+          <a href="/login" className="text-slate-200 hover:text-white">
+            Log in
+          </a>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AuthInput
           required
           placeholder="Organization name"
           value={form.organizationName}
           onChange={update("organizationName")}
-          className="rounded border px-3 py-2"
         />
-        <input
+        <AuthInput
           required
           placeholder="Workspace URL slug (e.g. acme)"
           value={form.slug}
           onChange={update("slug")}
-          className="rounded border px-3 py-2"
         />
-        <input
+        <AuthInput
           required
           placeholder="Your name"
           value={form.name}
           onChange={update("name")}
-          className="rounded border px-3 py-2"
         />
-        <input
+        <AuthInput
           required
           type="email"
           placeholder="Email"
           value={form.email}
           onChange={update("email")}
-          className="rounded border px-3 py-2"
         />
-        <input
+        <AuthInput
           required
           type="password"
           placeholder="Password"
           value={form.password}
           onChange={update("password")}
-          className="rounded border px-3 py-2"
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded bg-gray-900 px-3 py-2 text-white disabled:opacity-50"
-        >
-          {loading ? "Creating…" : "Create workspace"}
-        </button>
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        <AuthButton type="submit" loading={loading}>
+          Create workspace
+        </AuthButton>
       </form>
-      <a href="/login" className="text-sm text-gray-600">
-        Already have an account? Log in
-      </a>
-    </main>
+    </AuthShell>
   );
 }

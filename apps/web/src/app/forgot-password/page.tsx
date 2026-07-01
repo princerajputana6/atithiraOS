@@ -1,44 +1,55 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setLoading(true);
     await fetch("/api/v1/identity/password/reset-request", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email }),
     });
+    setLoading(false);
     setSubmitted(true);
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold">Reset your password</h1>
+    <AuthShell
+      title="Reset your password"
+      subtitle={
+        submitted ? undefined : "We'll email you a link to reset it"
+      }
+      footer={
+        <a href="/login" className="hover:text-slate-200">
+          Back to log in
+        </a>
+      }
+    >
       {submitted ? (
-        <p>If that email has an account, a reset link is on its way.</p>
+        <p className="text-center text-sm text-slate-300">
+          If that email has an account, a reset link is on its way.
+        </p>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+          <AuthInput
             type="email"
             required
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded border px-3 py-2"
           />
-          <button
-            type="submit"
-            className="rounded bg-gray-900 px-3 py-2 text-white"
-          >
+          <AuthButton type="submit" loading={loading}>
             Send reset link
-          </button>
+          </AuthButton>
         </form>
       )}
-    </main>
+    </AuthShell>
   );
 }

@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { AuthShell } from "@/components/auth-shell";
 
 export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
+  );
+}
+
+function VerifyEmailContent() {
   const params = useSearchParams();
   const token = params.get("token");
   const pending = params.get("pending");
@@ -35,20 +44,22 @@ export default function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4 text-center">
-      {status === "idle" && pending && (
-        <p>Check your email for a verification link before logging in.</p>
-      )}
-      {status === "verifying" && <p>Verifying your email…</p>}
-      {status === "done" && (
-        <>
-          <p>Your email is verified.</p>
-          <a href="/login" className="text-blue-600 underline">
-            Log in
-          </a>
-        </>
-      )}
-      {status === "error" && <p className="text-red-600">{error}</p>}
-    </main>
+    <AuthShell title="Verify your email">
+      <div className="text-center text-sm text-slate-300">
+        {status === "idle" && pending && (
+          <p>Check your email for a verification link before logging in.</p>
+        )}
+        {status === "verifying" && <p>Verifying your email…</p>}
+        {status === "done" && (
+          <div className="flex flex-col gap-3">
+            <p>Your email is verified.</p>
+            <a href="/login" className="text-indigo-300 hover:text-indigo-200">
+              Log in
+            </a>
+          </div>
+        )}
+        {status === "error" && <p className="text-red-400">{error}</p>}
+      </div>
+    </AuthShell>
   );
 }

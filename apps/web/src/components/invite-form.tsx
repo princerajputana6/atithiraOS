@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { Button, Input, Select, Field } from "@/components/ui";
 
 export function InviteForm() {
   const [email, setEmail] = useState("");
@@ -28,37 +29,35 @@ export function InviteForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
-      <div className="flex flex-col">
-        <label className="text-xs text-gray-500">Email</label>
-        <input
-          required
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border px-3 py-2"
-        />
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-wrap items-end gap-3"
+    >
+      <div className="min-w-[220px] flex-1">
+        <Field label="Email">
+          <Input
+            required
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Field>
       </div>
-      <div className="flex flex-col">
-        <label className="text-xs text-gray-500">Role</label>
-        <select
-          value={roleKey}
-          onChange={(e) => setRoleKey(e.target.value)}
-          className="rounded border px-3 py-2"
-        >
-          <option value="business_admin">Business Administrator</option>
-          <option value="department_manager">Department Manager</option>
-          <option value="employee">Employee</option>
-        </select>
+      <div className="w-56">
+        <Field label="Role">
+          <Select value={roleKey} onChange={(e) => setRoleKey(e.target.value)}>
+            <option value="business_admin">Business Administrator</option>
+            <option value="department_manager">Department Manager</option>
+            <option value="employee">Employee</option>
+          </Select>
+        </Field>
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="rounded bg-gray-900 px-3 py-2 text-white disabled:opacity-50"
-      >
-        {loading ? "Sending…" : "Send invite"}
-      </button>
-      {message && <p className="w-full text-sm text-gray-600">{message}</p>}
+      <Button type="submit" loading={loading}>
+        Send invite
+      </Button>
+      {message && (
+        <p className="w-full text-sm text-slate-500">{message}</p>
+      )}
     </form>
   );
 }

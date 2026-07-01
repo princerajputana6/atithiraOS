@@ -12,6 +12,7 @@
     "@atithira/config": "workspace:*",
     "@atithira/db": "workspace:*",
     "@atithira/types": "workspace:*",
-    "mongodb": "^6.12.0"
+    "mongodb": "^6.12.0",
+    "razorpay": "^2.9.6"
   }
 }

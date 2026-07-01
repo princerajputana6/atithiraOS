@@ -14,7 +14,12 @@
     "@atithira/core-tenancy": "workspace:*",
     "@atithira/core-security": "workspace:*",
     "@atithira/core-billing": "workspace:*",
-    "@atithira/core-events": "workspace:*"
+    "@atithira/core-events": "workspace:*",
+    "@atithira/module-finance": "workspace:*",
+    "@atithira/module-people": "workspace:*",
+    "@atithira/module-inventory": "workspace:*",
+    "@atithira/module-crm": "workspace:*",
+    "@atithira/module-website": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.1.8",

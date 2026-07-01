@@ -22,14 +22,18 @@ export class UserRepository {
     const doc = await this.collection.findOne({
       email: email.toLowerCase(),
     } as Filter<UserRecord>);
-    return doc as unknown as UserRecord | null;
+    // The driver returns _id as an ObjectId; every caller treats _id as a
+    // plain string (it's what gets stored as userId in every other
+    // collection), so normalize here rather than let a raw ObjectId leak out
+    // and silently fail `===` comparisons downstream.
+    return doc ? ({ ...doc, _id: String(doc._id) } as UserRecord) : null;
   }
 
   async findById(userId: string): Promise<UserRecord | null> {
     const doc = await this.collection.findOne({
       _id: new ObjectId(userId),
     } as unknown as Filter<UserRecord>);
-    return doc as unknown as UserRecord | null;
+    return doc ? ({ ...doc, _id: String(doc._id) } as UserRecord) : null;
   }
 
   async markEmailVerified(userId: string): Promise<void> {
@@ -67,11 +71,48 @@ export class UserRepository {
     );
   }
 
+  async isPlatformOwner(userId: string): Promise<boolean> {
+    const doc = await this.collection.findOne({
+      _id: new ObjectId(userId),
+      isPlatformOwner: true,
+    } as unknown as Filter<UserRecord>);
+    return !!doc;
+  }
+
+  async count(): Promise<number> {
+    return this.collection.countDocuments({});
+  }
+
+  async promoteToPlatformOwner(
+    userId: string,
+    passwordHash: string,
+  ): Promise<void> {
+    await this.collection.updateOne(
+      { _id: new ObjectId(userId) } as unknown as Filter<UserRecord>,
+      {
+        $set: {
+          isPlatformOwner: true,
+          passwordHash,
+          emailVerified: new Date(),
+          status: "active",
+          updatedAt: new Date(),
+        },
+        $inc: { sessionVersion: 1 },
+      },
+    );
+  }
+
   /** Bumps sessionVersion, invalidating every existing JWT session ("log out everywhere"). */
   async bumpSessionVersion(userId: string): Promise<void> {
     await this.collection.updateOne(
       { _id: new ObjectId(userId) } as unknown as Filter<UserRecord>,
       { $inc: { sessionVersion: 1 }, $set: { updatedAt: new Date() } },
     );
+  }
+
+  async deleteById(userId: string): Promise<void> {
+    await this.collection.deleteOne({
+      _id: new ObjectId(userId),
+    } as unknown as Filter<UserRecord>);
   }
 }

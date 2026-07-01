@@ -3,12 +3,12 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [totp, setTotp] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -19,57 +19,66 @@ export default function LoginPage() {
     const result = await signIn("credentials", {
       email,
       password,
-      totp,
       redirect: false,
     });
     setLoading(false);
     if (result?.error) {
-      setError("Invalid email, password, or authenticator code.");
+      setError("Invalid email or password.");
       return;
     }
     router.push("/dashboard");
   }
 
+  function continueWithSso() {
+    if (!email) {
+      setError("Enter your email above first.");
+      return;
+    }
+    window.location.href = `/api/auth/sso/start?email=${encodeURIComponent(email)}`;
+  }
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold">Log in to Atithira</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
+    <AuthShell
+      title="Welcome back"
+      subtitle="Log in to your Atithira workspace"
+      footer={
+        <a href="/forgot-password" className="hover:text-slate-200">
+          Forgot password?
+        </a>
+      }
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AuthInput
           type="email"
           required
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded border px-3 py-2"
         />
-        <input
+        <AuthInput
           type="password"
           required
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded border px-3 py-2"
         />
-        <input
-          type="text"
-          placeholder="Authenticator code (if enabled)"
-          value={totp}
-          onChange={(e) => setTotp(e.target.value)}
-          className="rounded border px-3 py-2"
-        />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded bg-gray-900 px-3 py-2 text-white disabled:opacity-50"
-        >
-          {loading ? "Logging in…" : "Log in"}
-        </button>
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        <AuthButton type="submit" loading={loading}>
+          Log in
+        </AuthButton>
       </form>
-      <div className="flex justify-between text-sm text-gray-600">
-        <a href="/signup">Create a workspace</a>
-        <a href="/forgot-password">Forgot password?</a>
+      <div className="mt-4 flex items-center gap-3 text-xs text-slate-500">
+        <span className="h-px flex-1 bg-white/10" />
+        or
+        <span className="h-px flex-1 bg-white/10" />
       </div>
-    </main>
+      <button
+        type="button"
+        onClick={continueWithSso}
+        className="mt-4 w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
+      >
+        Continue with SSO
+      </button>
+    </AuthShell>
   );
 }

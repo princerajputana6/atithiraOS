@@ -8,12 +8,15 @@ export interface UserRecord {
   emailVerified: Date | null;
   name?: string;
   image?: string;
-  passwordHash: string;
+  /** Absent for SSO-only users, who authenticate via their tenant's IdP instead. */
+  passwordHash?: string;
   mfaEnabled: boolean;
   mfaSecret?: string | null;
   mfaRecoveryCodesHash: string[];
   sessionVersion: number;
   status: UserStatus;
+  /** Global Atithira staff (Platform Owner). Not tied to any tenant. */
+  isPlatformOwner?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

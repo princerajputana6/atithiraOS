@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # Build-time only placeholders — no live services are contacted during
+  # lint/typecheck/build; MongoClient connects lazily and nothing in the
+  # module-scope NextAuth() config performs network I/O at import time.
+  MONGODB_URI: mongodb://127.0.0.1:27017/ci-placeholder
+  AUTH_SECRET: ci-placeholder-secret-not-for-production-0000000000000
+  AUTH_URL: http://localhost:3000
+  MFA_ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
+  RESEND_API_KEY: ci-placeholder
+  RESEND_FROM_EMAIL: ci@example.com
+  IMAGEKIT_PUBLIC_KEY: ci-placeholder
+  IMAGEKIT_PRIVATE_KEY: ci-placeholder
+  IMAGEKIT_URL_ENDPOINT: https://ik.imagekit.io/ci-placeholder
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      # Cross-tenant isolation is the single most important test in the
+      # codebase (see MASTER_PLAN.md §5) — run it as its own explicit gate so
+      # a regression here is never buried in a generic "test" job failure.
+      - run: pnpm test:isolation
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build

@@ -11,8 +11,10 @@ export const PERMISSIONS = {
   SECURITY_ROLE_MANAGE: "security.role.manage",
   SECURITY_MEMBER_MANAGE: "security.member.manage",
   SECURITY_AUDIT_READ: "security.audit.read",
+  SECURITY_SSO_MANAGE: "security.sso.manage",
   BILLING_SUBSCRIPTION_MANAGE: "billing.subscription.manage",
   BILLING_SUBSCRIPTION_READ: "billing.subscription.read",
+  REPORTING_READ: "reporting.read",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

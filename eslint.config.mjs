@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
+import reactHooks from "eslint-plugin-react-hooks";
 
 // Tenant isolation guardrail: only packages/db is allowed to construct a
 // MongoClient (or reach into getDb()'s connection machinery). Every other
@@ -48,5 +49,17 @@ export default tseslint.config(
     files: ["**/*.{ts,tsx}"],
     ignores: ["packages/db/**"],
     ...restrictMongoClient,
+  },
+  {
+    // Only the two classic hooks rules — v7's "recommended" config ships the
+    // stricter React Compiler ruleset (set-state-in-effect, purity, etc.)
+    // which flags this codebase's pervasive, legitimate fetch-on-mount
+    // pattern (`useEffect(() => { void load() }, [])`) as an error.
+    files: ["apps/web/**/*.{ts,tsx}"],
+    plugins: { "react-hooks": reactHooks },
+    rules: {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+    },
   },
 );

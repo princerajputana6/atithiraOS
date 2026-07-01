@@ -21,7 +21,32 @@ const envSchema = z.object({
   INNGEST_EVENT_KEY: z.string().optional(),
   INNGEST_SIGNING_KEY: z.string().optional(),
 
+  // AI Copilot — optional so the ₹0 setup runs without it. When unset, the
+  // Copilot returns a graceful "not configured" message instead of erroring.
+  ANTHROPIC_API_KEY: z.string().optional(),
+  AI_MODEL: z.string().default("claude-haiku-4-5"),
+
+  // Razorpay — optional so the ₹0 setup runs without it. When unset, checkout
+  // returns a graceful "payment gateway not configured" error instead of
+  // crashing, same pattern as the AI Copilot above.
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+
+  // Root domain tenant sites are hosted under, e.g. "atithira.com" — a
+  // published page then becomes reachable at "{tenantSlug}.atithira.com" once
+  // wildcard DNS + a wildcard TLS cert point at this app. Optional: unset
+  // means tenant sites are only reachable at the in-app "/site/{slug}" path
+  // (fine for local dev, or before DNS is configured). See middleware.ts.
+  NEXT_PUBLIC_ROOT_DOMAIN: z.string().optional(),
+
+  // Observability — optional so the ₹0 setup runs without a collector.
+  // When OTEL_EXPORTER_OTLP_ENDPOINT is unset, traces export to the console
+  // instead of failing; see core-observability/src/tracing.ts.
+  LOG_LEVEL: z.string().default("info"),
+  OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

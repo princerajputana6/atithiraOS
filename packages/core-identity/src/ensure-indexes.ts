@@ -21,4 +21,9 @@ export async function ensureIdentityIndexes(): Promise<void> {
   await db
     .collection("invites")
     .createIndex({ tenantId: 1, tokenHash: 1 }, { unique: true });
+  await db.collection("sso_configs").createIndex({ tenantId: 1 }, { unique: true });
+  await db.collection("sso_configs").createIndex({ emailDomains: 1 });
+  await db
+    .collection("sso_tickets")
+    .createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 }

@@ -9,6 +9,7 @@ import {
   getTenantConfigRepository,
   getMembershipRepository,
 } from "../collections";
+import { getDefaultFeatureFlagsForNewTenant } from "./platform-module-service";
 
 export interface CreateOrganizationInput {
   organizationName: string;
@@ -58,6 +59,7 @@ export async function createOrganizationForNewUser(
       const branchRepo = await getBranchRepository();
       const configRepo = await getTenantConfigRepository();
       const membershipRepo = await getMembershipRepository();
+      const featureFlags = await getDefaultFeatureFlagsForNewTenant();
 
       await branchRepo.insertOne(
         {
@@ -76,7 +78,7 @@ export async function createOrganizationForNewUser(
           locale: input.locale ?? "en-IN",
           currency: input.currency ?? "INR",
           timezone: input.timezone ?? "Asia/Kolkata",
-          featureFlags: {},
+          featureFlags,
         } as Omit<TenantConfig, "_id" | "tenantId">,
         { skipAudit: true },
       );

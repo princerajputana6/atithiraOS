@@ -1,9 +1,18 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const router = useRouter();
   const params = useSearchParams();
   const token = params.get("token") ?? "";
@@ -30,26 +39,27 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold">Choose a new password</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
+    <AuthShell
+      title="Choose a new password"
+      footer={
+        <a href="/login" className="hover:text-slate-200">
+          Back to log in
+        </a>
+      }
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <AuthInput
           type="password"
           required
           placeholder="New password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded border px-3 py-2"
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded bg-gray-900 px-3 py-2 text-white disabled:opacity-50"
-        >
-          {loading ? "Saving…" : "Save new password"}
-        </button>
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        <AuthButton type="submit" loading={loading}>
+          Save new password
+        </AuthButton>
       </form>
-    </main>
+    </AuthShell>
   );
 }

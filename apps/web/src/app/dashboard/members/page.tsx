@@ -8,6 +8,7 @@ import {
 import { getRolesForUser } from "@atithira/core-security";
 import { runWithTenantContext } from "@atithira/db";
 import { InviteForm } from "@/components/invite-form";
+import { PageHeader, Card, CardBody, Table, Th, Td, Badge } from "@/components/ui";
 import { ensureBootstrapped } from "@/lib/bootstrap";
 
 export default async function MembersPage() {
@@ -42,29 +43,44 @@ export default async function MembersPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Members</h1>
-      <InviteForm />
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b text-gray-500">
-            <th className="py-2">Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Roles</th>
+    <div>
+      <PageHeader
+        title="Members"
+        description="Invite teammates and manage their roles."
+      />
+
+      <Card className="mb-6">
+        <CardBody>
+          <InviteForm />
+        </CardBody>
+      </Card>
+
+      <Table>
+        <thead className="border-b border-slate-200 bg-slate-50">
+          <tr>
+            <Th>Name</Th>
+            <Th>Email</Th>
+            <Th>Status</Th>
+            <Th>Roles</Th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-slate-100">
           {members.map((member) => (
-            <tr key={member.userId} className="border-b">
-              <td className="py-2">{member.name ?? "—"}</td>
-              <td>{member.email}</td>
-              <td>{member.status}</td>
-              <td>{member.roles.join(", ") || "—"}</td>
+            <tr key={member.userId}>
+              <Td className="font-medium text-slate-900">
+                {member.name ?? "—"}
+              </Td>
+              <Td>{member.email}</Td>
+              <Td>
+                <Badge tone={member.status === "active" ? "green" : "amber"}>
+                  {member.status}
+                </Badge>
+              </Td>
+              <Td>{member.roles.join(", ") || "—"}</Td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 }

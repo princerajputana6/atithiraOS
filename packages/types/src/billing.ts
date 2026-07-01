@@ -18,3 +18,18 @@ export interface Subscription {
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
 }
+
+export type BillingPaymentStatus = "created" | "captured" | "failed";
+
+/** One record per Razorpay order — the append-only payment ledger for a tenant's subscription. */
+export interface BillingPayment {
+  _id: string;
+  tenantId: string;
+  planKey: PlanKey;
+  amountPaise: number;
+  currency: string;
+  status: BillingPaymentStatus;
+  razorpayOrderId: string;
+  razorpayPaymentId?: string;
+  createdAt: Date;
+}

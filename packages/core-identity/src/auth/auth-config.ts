@@ -8,6 +8,7 @@ import { getUserRepository, getSessionDenylistRepository } from "../collections"
 import { verifyPassword } from "../crypto/password";
 import { verifyTotpToken } from "../mfa/totp";
 import { decryptSecret } from "../mfa/encryption";
+import { consumeSsoTicket } from "../services/sso-service";
 
 // Custom JWT fields are applied via inline casts in the callbacks below
 // rather than a `declare module "next-auth/jwt"` augmentation — that
@@ -60,12 +61,44 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const userRepo = await getUserRepository();
         const user = await userRepo.findByEmail(email);
         if (!user || !user.emailVerified || user.status !== "active") return null;
+        // SSO-only users have no passwordHash — the password flow can never
+        // authenticate them, by design (they must use their tenant's IdP).
+        if (!user.passwordHash) return null;
         if (!(await verifyPassword(user.passwordHash, password))) return null;
 
         if (user.mfaEnabled) {
           if (!totp || !user.mfaSecret) return null;
           if (!verifyTotpToken(decryptSecret(user.mfaSecret), totp)) return null;
         }
+
+        return {
+          id: user._id,
+          email: user.email,
+          name: user.name ?? undefined,
+          sessionVersion: user.sessionVersion,
+        };
+      },
+    }),
+    // The bridge between a verified IdP identity and an Auth.js session (see
+    // sso-service.ts's issueSsoTicket/consumeSsoTicket). Never called
+    // directly by a user — the SSO callback routes are the only issuer of
+    // valid tickets, and each ticket works exactly once.
+    Credentials({
+      id: "sso-ticket",
+      name: "SSO",
+      credentials: {
+        ticket: { label: "Ticket", type: "text" },
+      },
+      authorize: async (credentials) => {
+        const ticket = credentials?.ticket as string | undefined;
+        if (!ticket) return null;
+
+        const consumed = await consumeSsoTicket(ticket);
+        if (!consumed) return null;
+
+        const userRepo = await getUserRepository();
+        const user = await userRepo.findById(consumed.userId);
+        if (!user || user.status !== "active") return null;
 
         return {
           id: user._id,

@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+allowBuilds:
+  esbuild: true
+  mongodb-memory-server: true
+  protobufjs: true
+  sharp: true

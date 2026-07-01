@@ -1,0 +1,32 @@
+{
+  "name": "@atithira/core-identity",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./auth-resolver": "./src/auth/install-auth-resolver.ts",
+    "./ensure-indexes": "./src/ensure-indexes.ts"
+  },
+  "dependencies": {
+    "@atithira/config": "workspace:*",
+    "@atithira/db": "workspace:*",
+    "@atithira/types": "workspace:*",
+    "@atithira/core-events": "workspace:*",
+    "@atithira/core-tenancy": "workspace:*",
+    "@atithira/core-security": "workspace:*",
+    "next-auth": "5.0.0-beta.25",
+    "@auth/mongodb-adapter": "^3.7.4",
+    "@node-rs/argon2": "^2.0.2",
+    "otplib": "^12.0.1",
+    "qrcode": "^1.5.4",
+    "resend": "^4.0.1",
+    "mongodb": "^6.12.0"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5"
+  }
+}

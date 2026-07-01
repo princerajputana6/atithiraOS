@@ -1,0 +1,23 @@
+{
+  "name": "@atithira/tests",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:isolation": "vitest run"
+  },
+  "dependencies": {
+    "@atithira/config": "workspace:*",
+    "@atithira/db": "workspace:*",
+    "@atithira/types": "workspace:*",
+    "@atithira/core-identity": "workspace:*",
+    "@atithira/core-tenancy": "workspace:*",
+    "@atithira/core-security": "workspace:*",
+    "@atithira/core-billing": "workspace:*",
+    "@atithira/core-events": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8",
+    "mongodb-memory-server": "^10.1.2"
+  }
+}

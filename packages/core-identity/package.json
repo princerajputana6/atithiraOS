@@ -13,20 +13,20 @@
   },
   "dependencies": {
     "@atithira/config": "workspace:*",
+    "@atithira/core-events": "workspace:*",
+    "@atithira/core-security": "workspace:*",
+    "@atithira/core-tenancy": "workspace:*",
     "@atithira/db": "workspace:*",
     "@atithira/types": "workspace:*",
-    "@atithira/core-events": "workspace:*",
-    "@atithira/core-tenancy": "workspace:*",
-    "@atithira/core-security": "workspace:*",
-    "next-auth": "5.0.0-beta.25",
     "@auth/mongodb-adapter": "^3.7.4",
-    "@node-rs/argon2": "^2.0.2",
+    "@node-saml/node-saml": "^5.0.1",
+    "hash-wasm": "^4.12.0",
+    "mongodb": "^6.12.0",
+    "next-auth": "5.0.0-beta.25",
+    "openid-client": "^6.1.7",
     "otplib": "^12.0.1",
     "qrcode": "^1.5.4",
-    "resend": "^4.0.1",
-    "mongodb": "^6.12.0",
-    "openid-client": "^6.1.7",
-    "@node-saml/node-saml": "^5.0.1"
+    "resend": "^4.0.1"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.5"

@@ -45,6 +45,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
   pages: { signIn: "/login" },
   secret: getEnv().AUTH_SECRET,
+  // Behind a TLS-terminating proxy (Vercel, most PaaS) the app sees the
+  // request as http internally with the real scheme in X-Forwarded-Proto.
+  // Trusting the forwarded host lets Auth.js detect https correctly, so the
+  // production session cookie is set with the Secure flag its `__Secure-`
+  // name prefix requires — without this the browser silently drops the
+  // cookie and every protected route bounces back to /login.
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {

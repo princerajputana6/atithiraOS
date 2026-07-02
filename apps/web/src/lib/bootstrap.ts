@@ -1,15 +1,17 @@
 let bootstrapPromise: Promise<void> | null = null;
+let seedingStarted = false;
 
-async function bootstrap(): Promise<void> {
+/**
+ * In-memory wiring that MUST be in place before any request is handled: the
+ * audit hook, the auth resolver, and the workflow-action bridge. All are
+ * synchronous, process-local registrations — no DB, no network — so awaiting
+ * this is effectively free.
+ */
+async function installHooks(): Promise<void> {
   const { installAuditHook } = await import("@atithira/core-security");
   const { installAuthResolver } = await import(
     "@atithira/core-identity/auth-resolver"
   );
-  const { ensureIdentityIndexes } = await import(
-    "@atithira/core-identity/ensure-indexes"
-  );
-  const { seedDefaultPlans } = await import("@atithira/core-billing");
-  const { seedFirstPartyListings } = await import("@atithira/core-marketplace");
   const { registerWorkflowActions } = await import("@/lib/runtime-hooks");
   const { startTracing } = await import("@atithira/core-observability");
 
@@ -19,6 +21,22 @@ async function bootstrap(): Promise<void> {
   // Installs the audit hook (again — idempotent) + the create_task workflow
   // action bridge. Shared with the Inngest route so both paths behave alike.
   registerWorkflowActions();
+}
+
+/**
+ * Idempotent one-time DB setup: index creation + default plan / first-party
+ * listing seeds. Intentionally NOT awaited by request handlers — it used to
+ * add ~15 (cross-region) round trips to the first request of every cold
+ * serverless instance. Fire-and-forget: indexes only speed up queries (not
+ * required for correctness) and the seeds are read with graceful fallbacks, so
+ * a request that races ahead of seeding still works.
+ */
+async function seedOnce(): Promise<void> {
+  const { ensureIdentityIndexes } = await import(
+    "@atithira/core-identity/ensure-indexes"
+  );
+  const { seedDefaultPlans } = await import("@atithira/core-billing");
+  const { seedFirstPartyListings } = await import("@atithira/core-marketplace");
 
   await ensureIdentityIndexes();
   await seedDefaultPlans();
@@ -45,17 +63,19 @@ async function ensureSearchIndexes(): Promise<void> {
 }
 
 /**
- * Idempotent, memoized app bootstrap — call and await this at the top of
- * every route handler that touches tenant-scoped data or auth. This replaces
- * Next.js's instrumentation.ts for this wiring: instrumentation.ts uses a
- * restricted bundler config that can't handle @node-rs/argon2's native
- * binding or mongodb's optional client-side-encryption dependency chain,
- * even with serverExternalPackages configured. Regular route handlers use
- * normal bundling, which handles both fine.
+ * Call and await at the top of every route handler that touches tenant-scoped
+ * data or auth. Awaits only the fast in-memory wiring; kicks off the one-time
+ * idempotent DB seeding in the background so it never blocks request latency.
  */
 export function ensureBootstrapped(): Promise<void> {
   if (!bootstrapPromise) {
-    bootstrapPromise = bootstrap();
+    bootstrapPromise = installHooks();
+    if (!seedingStarted) {
+      seedingStarted = true;
+      // Best-effort; if it fails (transient DB error) the next cold start
+      // retries. Never awaited on the request path.
+      void seedOnce().catch(() => {});
+    }
   }
   return bootstrapPromise;
 }

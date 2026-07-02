@@ -3,12 +3,12 @@ import {
   listTablesWithQr,
   createTable,
 } from "@atithira/module-restaurant";
-import { getEnv } from "@atithira/config";
 import { tenantApiForModule } from "@/lib/api";
+import { getRequestOrigin } from "@/lib/request-origin";
 
 export async function GET() {
   return tenantApiForModule("restaurant", RESTAURANT_PERMISSIONS.TABLE_MANAGE, async () => {
-    const baseUrl = getEnv().NEXT_PUBLIC_APP_URL;
+    const baseUrl = await getRequestOrigin();
     const tables = await listTablesWithQr(baseUrl);
     return { tables };
   });

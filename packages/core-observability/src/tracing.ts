@@ -20,14 +20,23 @@ export function startTracing(): void {
   started = true;
 
   const env = getEnv();
+  // No collector configured (Vercel/production without a self-hosted OTel
+  // stack) → do NOT start the SDK. getNodeAutoInstrumentations() otherwise
+  // patches http/mongodb/dns/etc. on every cold start, and the exporter keeps
+  // POSTing spans to a dead localhost:4318 endpoint — real per-query and
+  // per-request overhead for zero benefit. Tracing only runs when pointed at a
+  // real collector via OTEL_EXPORTER_OTLP_ENDPOINT.
+  if (!env.OTEL_EXPORTER_OTLP_ENDPOINT) {
+    logger.info("OTEL_EXPORTER_OTLP_ENDPOINT unset — tracing disabled");
+    return;
+  }
+
   const sdk = new NodeSDK({
     resource: new Resource({
       [ATTR_SERVICE_NAME]: "atithira-web",
     }),
     traceExporter: new OTLPTraceExporter({
-      url: env.OTEL_EXPORTER_OTLP_ENDPOINT
-        ? `${env.OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces`
-        : "http://localhost:4318/v1/traces",
+      url: `${env.OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces`,
     }),
     instrumentations: [getNodeAutoInstrumentations()],
   });

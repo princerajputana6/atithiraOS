@@ -91,6 +91,8 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: "Website", href: "/dashboard/website", moduleKey: "website" },
       { label: "Pages", href: "/dashboard/website/pages", moduleKey: "website" },
       { label: "Forms", href: "/dashboard/website/forms", moduleKey: "website" },
+      { label: "Bookings", href: "/dashboard/website/bookings", moduleKey: "website" },
+      { label: "Orders", href: "/dashboard/website/orders", moduleKey: "website" },
     ],
   },
   {

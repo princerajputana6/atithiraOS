@@ -89,8 +89,8 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
 
   if (!tenant) {
     return (
-      <div className="text-sm text-slate-400">
-        <Link href="/admin/tenants" className="text-indigo-400 hover:text-indigo-300">
+      <div className="text-sm text-slate-600">
+        <Link href="/admin/tenants" className="text-brand-700 hover:text-brand-800">
           ← Tenants
         </Link>
         <p className="mt-4">Loading…</p>
@@ -104,7 +104,7 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
     <div>
       <Link
         href="/admin/tenants"
-        className="mb-4 inline-block text-sm text-indigo-400 hover:text-indigo-300"
+        className="mb-4 inline-block text-sm font-medium text-brand-700 hover:text-brand-800"
       >
         ← Tenants
       </Link>
@@ -118,20 +118,20 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
           <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Owner</p>
-          <p className="mt-2 text-sm text-white">{tenant.ownerEmail ?? "—"}</p>
+          <p className="mt-2 text-sm text-slate-700">{tenant.ownerEmail ?? "—"}</p>
         </Card>
         <Card>
           <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Plan</p>
-          <p className="mt-2 text-sm capitalize text-white">{tenant.planKey ?? "—"}</p>
+          <p className="mt-2 text-sm capitalize text-slate-700">{tenant.planKey ?? "—"}</p>
         </Card>
         <Card>
           <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Members</p>
-          <p className="mt-2 text-sm text-white">{tenant.memberCount}</p>
+          <p className="mt-2 text-sm text-slate-700">{tenant.memberCount}</p>
         </Card>
       </div>
 
       <Card className="mt-6">
-        <h2 className="mb-3 text-sm font-semibold text-white">Lifecycle</h2>
+        <h2 className="mb-3 text-sm font-semibold text-slate-950">Lifecycle</h2>
         <div className="flex flex-wrap gap-2">
           {(["trial", "active", "suspended", "churned"] as TenantStatus[]).map((s) => (
             <button
@@ -140,8 +140,8 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
               disabled={tenant.status === s}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium capitalize ring-1 transition disabled:opacity-40 ${
                 tenant.status === s
-                  ? "bg-white/10 text-white ring-white/20"
-                  : "text-slate-300 ring-white/10 hover:bg-white/5"
+                  ? "bg-brand-600 text-white ring-brand-600"
+                  : "text-slate-700 ring-blue-100 hover:bg-blue-50"
               }`}
             >
               {s}
@@ -151,7 +151,7 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
       </Card>
 
       <Card className="mt-6">
-        <h2 className="text-sm font-semibold text-white">Features</h2>
+        <h2 className="text-sm font-semibold text-slate-950">Features</h2>
         <p className="mt-1 text-xs text-slate-500">
           Grant or revoke modules for this tenant. Changes take effect on their next page load.
         </p>
@@ -161,15 +161,15 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
               key={mod.key}
               onClick={() => toggleModule(mod)}
               disabled={savingKey === mod.key}
-              className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left transition hover:bg-white/[0.07] disabled:opacity-60"
+              className="flex items-center justify-between gap-3 rounded-xl border border-blue-100 bg-white px-4 py-3 text-left transition hover:bg-blue-50 disabled:opacity-60"
             >
               <span>
-                <span className="block text-sm font-medium text-white">{mod.label}</span>
-                <span className="block text-xs text-slate-500">{mod.description}</span>
+                <span className="block text-sm font-medium text-slate-950">{mod.label}</span>
+                <span className="block text-xs text-slate-600">{mod.description}</span>
               </span>
               <span
                 className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition ${
-                  mod.enabled ? "bg-emerald-500" : "bg-slate-600"
+                  mod.enabled ? "bg-emerald-500" : "bg-slate-300"
                 }`}
               >
                 <span
@@ -183,19 +183,19 @@ export function TenantDetailClient({ tenantId }: { tenantId: string }) {
         </div>
       </Card>
 
-      <Card className="mt-6 border-red-500/30 bg-red-500/[0.04]">
-        <h2 className="text-sm font-semibold text-red-300">Danger zone</h2>
-        <p className="mt-1 text-xs text-slate-400">
-          Permanently delete this tenant and <span className="text-slate-300">all</span> of its
+      <Card className="mt-6 border-red-200 bg-red-50">
+        <h2 className="text-sm font-semibold text-red-700">Danger zone</h2>
+        <p className="mt-1 text-xs text-slate-600">
+          Permanently delete this tenant and <span className="font-medium text-slate-800">all</span> of its
           data — members, roles, and every module record. This cannot be undone. Type the
-          workspace slug <span className="font-mono text-slate-300">{tenant.slug}</span> to confirm.
+          workspace slug <span className="font-mono font-medium text-slate-800">{tenant.slug}</span> to confirm.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <input
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder={tenant.slug}
-            className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-600 outline-none focus:border-red-400/50 focus:ring-2 focus:ring-red-400/20"
+            className="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
           />
           <button
             onClick={deleteTenant}

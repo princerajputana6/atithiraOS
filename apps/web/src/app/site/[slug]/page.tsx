@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { loadPublishedSite } from "@/lib/public-site";
+import { BrandLogoBadge } from "@/components/brand-logo";
 import { SiteRenderer } from "@/components/website/site-renderer";
 
 export async function generateMetadata({
@@ -29,8 +30,12 @@ export default async function PublicHomePage({
   return (
     <main className="min-h-screen bg-white">
       <SiteRenderer blocks={site.page.blocks} forms={site.forms} slug={slug} businessName={site.orgName} />
-      <footer className="border-t border-slate-100 px-6 py-8 text-center text-xs text-slate-400">
-        {site.orgName} · powered by Atithira
+      <footer className="flex items-center justify-center gap-2 border-t border-slate-100 px-6 py-8 text-center text-xs text-slate-400">
+        <span>{site.orgName} · powered by</span>
+        <BrandLogoBadge
+          className="inline-flex items-center rounded-lg bg-brand-700 px-2.5 py-1.5 shadow-sm"
+          logoClassName="h-5 w-auto max-w-[6rem] object-contain"
+        />
       </footer>
     </main>
   );

@@ -10,6 +10,7 @@ import {
   Field,
   Badge,
 } from "@/components/ui";
+import { PasswordInput } from "@/components/password-input";
 
 interface PaymentInfo {
   connected: boolean;
@@ -167,8 +168,7 @@ export function PaymentSettingsClient() {
                   : "Key secret"
               }
             >
-              <Input
-                type="password"
+              <PasswordInput
                 required={!info?.connected}
                 placeholder="••••••••••••••••"
                 value={keySecret}

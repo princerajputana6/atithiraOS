@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/brand-logo";
 import { NAV_GROUPS, SETTINGS_GROUP, type NavGroup } from "./nav-config";
 
 /** Keeps only items the tenant is entitled to; drops a group if nothing remains. */
@@ -39,7 +40,7 @@ function Icon({ path }: { path: string }) {
 function Group({ group, pathname }: { group: NavGroup; pathname: string }) {
   return (
     <div>
-      <div className="flex items-center gap-2 px-3 pb-1.5 pt-4 text-[11px] font-semibold uppercase tracking-wider text-indigo-300/70">
+      <div className="flex items-center gap-2 px-3 pb-1.5 pt-4 text-[11px] font-semibold uppercase tracking-wider text-blue-100/70">
         <Icon path={group.icon} />
         {group.label}
       </div>
@@ -53,8 +54,8 @@ function Group({ group, pathname }: { group: NavGroup; pathname: string }) {
               href={item.href}
               className={`mx-2 rounded-lg px-3 py-1.5 text-sm transition ${
                 active
-                  ? "bg-white/15 font-medium text-white"
-                  : "text-indigo-100/70 hover:bg-white/10 hover:text-white"
+                  ? "bg-white/20 font-medium text-white shadow-sm"
+                  : "text-blue-50/75 hover:bg-white/10 hover:text-white"
               }`}
             >
               {item.label}
@@ -77,20 +78,18 @@ export function Sidebar({
     <aside className="hidden w-60 shrink-0 flex-col bg-sidebar-gradient lg:flex">
       <Link
         href="/dashboard"
-        className="flex items-center gap-2 px-5 py-4 text-sm font-semibold tracking-tight text-white"
+        className="flex items-center px-5 py-4"
+        aria-label="Atithira dashboard"
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/15 text-xs font-bold">
-          A
-        </span>
-        Atithira
+        <BrandLogo className="h-9 w-auto max-w-[9rem] object-contain" priority />
       </Link>
 
       <Link
         href="/dashboard"
         className={`mx-2 mb-1 rounded-lg px-3 py-1.5 text-sm transition ${
           pathname === "/dashboard"
-            ? "bg-white/15 font-medium text-white"
-            : "text-indigo-100/70 hover:bg-white/10 hover:text-white"
+            ? "bg-white/20 font-medium text-white shadow-sm"
+            : "text-blue-50/75 hover:bg-white/10 hover:text-white"
         }`}
       >
         Home

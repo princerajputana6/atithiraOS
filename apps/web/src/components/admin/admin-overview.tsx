@@ -65,7 +65,7 @@ export function AdminOverview() {
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">
             Plan distribution
           </h2>
           {stats && Object.keys(stats.planDistribution).length > 0 ? (
@@ -75,12 +75,12 @@ export function AdminOverview() {
                 return (
                   <div key={plan}>
                     <div className="mb-1 flex items-center justify-between text-sm">
-                      <span className="capitalize text-slate-200">{plan}</span>
-                      <span className="text-slate-500">{count}</span>
+                      <span className="capitalize text-slate-700">{plan}</span>
+                      <span className="text-slate-600">{count}</span>
                     </div>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-blue-50">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 to-indigo-500"
+                        className="h-full rounded-full bg-gradient-to-r from-brand-500 to-sky-400"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -94,7 +94,7 @@ export function AdminOverview() {
         </Card>
 
         <Card>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">
             Recent platform activity
           </h2>
           {activity.length === 0 ? (
@@ -103,11 +103,11 @@ export function AdminOverview() {
             <ul className="flex max-h-72 flex-col gap-3 overflow-y-auto pr-1">
               {activity.map((entry) => (
                 <li key={entry.id} className="text-sm">
-                  <div className="text-slate-200">
-                    <span className="font-medium text-white">
+                  <div className="text-slate-700">
+                    <span className="font-medium text-slate-950">
                       {entry.actorEmail ?? entry.actorType}
                     </span>{" "}
-                    <span className="text-slate-400">{entry.action}</span>{" "}
+                    <span className="text-slate-600">{entry.action}</span>{" "}
                     <span className="text-slate-500">on {entry.targetType}</span>
                   </div>
                   <div className="text-xs text-slate-500">

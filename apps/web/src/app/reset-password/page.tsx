@@ -3,6 +3,7 @@
 import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
+import { PasswordInput } from "@/components/password-input";
 
 export default function ResetPasswordPage() {
   return (
@@ -48,8 +49,8 @@ function ResetPasswordContent() {
       }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-        <AuthInput
-          type="password"
+        <PasswordInput
+          variant="auth"
           required
           placeholder="New password"
           value={password}

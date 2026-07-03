@@ -11,6 +11,7 @@ import {
   Field,
   Badge,
 } from "@/components/ui";
+import { PasswordInput } from "@/components/password-input";
 
 type Protocol = "oidc" | "saml";
 
@@ -161,8 +162,7 @@ export function SsoSettingsClient() {
                       : "Client secret"
                   }
                 >
-                  <Input
-                    type="password"
+                  <PasswordInput
                     value={form.oidcClientSecret}
                     onChange={(e) =>
                       setForm({ ...form, oidcClientSecret: e.target.value })

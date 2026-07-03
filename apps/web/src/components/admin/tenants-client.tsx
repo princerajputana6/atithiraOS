@@ -12,6 +12,7 @@ import {
   StatusPill,
   type TenantStatus,
 } from "@/components/admin/admin-ui";
+import { PasswordInput } from "@/components/password-input";
 
 interface Tenant {
   id: string;
@@ -138,7 +139,7 @@ export function TenantsClient() {
     <div>
       <AdminPageHeader
         title="Tenants"
-        description="Create a tenant from an industry template — the form adapts to what that business needs."
+        description="Create a reviewed workspace from an industry profile, selected services, and owner details."
         action={
           <AdminButton
             onClick={() => {
@@ -146,26 +147,57 @@ export function TenantsClient() {
               if (showForm) resetForm();
             }}
           >
-            {showForm ? "Cancel" : "+ New tenant"}
+            {showForm ? "Close setup" : "+ New workspace"}
           </AdminButton>
         }
       />
 
       {showForm && (
-        <Card className="mb-6">
+        <Card className="mb-6 overflow-hidden p-0">
+          <div className="grid grid-cols-1 lg:grid-cols-[18rem_1fr]">
+            <aside className="bg-sidebar-gradient p-6 text-white">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-100/70">
+                Workspace setup
+              </p>
+              <h2 className="mt-2 text-xl font-semibold">Configure before launch</h2>
+              <p className="mt-2 text-sm leading-relaxed text-blue-50/75">
+                Pick the business type, capture operating context, then assign the modules and owner.
+              </p>
+              <div className="mt-6 space-y-3">
+                {["Industry profile", "Business requirements", "Modules & owner"].map((label, i) => (
+                  <div
+                    key={label}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm ${
+                      i === step ? "bg-white/20 text-white" : i < step ? "text-blue-50" : "text-blue-100/60"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                        i <= step ? "bg-white text-brand-700" : "bg-white/10 text-blue-100"
+                      }`}
+                    >
+                      {i + 1}
+                    </span>
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </aside>
+
+            <div className="p-6">
           {/* Step indicator */}
           <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
             {["Industry", "Requirements", "Owner & workspace"].map((label, i) => (
               <div key={label} className="flex items-center gap-2">
                 <span
                   className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
-                    i <= step ? "bg-indigo-500 text-white" : "bg-white/10 text-slate-400"
+                    i <= step ? "bg-brand-600 text-white" : "bg-blue-50 text-slate-500"
                   }`}
                 >
                   {i + 1}
                 </span>
-                <span className={i <= step ? "text-white" : "text-slate-500"}>{label}</span>
-                {i < 2 && <span className="mx-1 text-slate-600">›</span>}
+                <span className={i <= step ? "text-slate-950" : "text-slate-500"}>{label}</span>
+                {i < 2 && <span className="mx-1 text-slate-400">›</span>}
               </div>
             ))}
           </div>
@@ -173,10 +205,10 @@ export function TenantsClient() {
           {/* Step 0 — industry */}
           {step === 0 && (
             <div>
-              <h2 className="mb-1 text-lg font-semibold text-white">
+              <h2 className="mb-1 text-lg font-semibold text-slate-950">
                 What kind of business is this?
               </h2>
-              <p className="mb-4 text-sm text-slate-400">
+              <p className="mb-4 text-sm text-slate-600">
                 We&apos;ll pre-configure the right modules and terminology for the vertical.
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -186,18 +218,18 @@ export function TenantsClient() {
                     onClick={() => choosePack(p)}
                     className={`rounded-xl border p-4 text-left transition ${
                       packKey === p.key
-                        ? "border-indigo-400 bg-indigo-500/10"
-                        : "border-white/10 bg-white/5 hover:border-white/20"
+                        ? "border-brand-300 bg-blue-50"
+                        : "border-blue-100 bg-white hover:border-brand-200 hover:bg-blue-50"
                     }`}
                   >
                     <div className="text-2xl">{p.emoji}</div>
-                    <div className="mt-2 font-medium text-white">{p.label}</div>
-                    <div className="mt-1 text-xs text-slate-400">{p.tagline}</div>
+                    <div className="mt-2 font-medium text-slate-950">{p.label}</div>
+                    <div className="mt-1 text-xs text-slate-600">{p.tagline}</div>
                     <div className="mt-3 flex flex-wrap gap-1">
                       {p.modules.map((m) => (
                         <span
                           key={m}
-                          className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] text-slate-300"
+                          className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] text-slate-600"
                         >
                           {MODULE_LABEL.get(m) ?? m}
                         </span>
@@ -212,10 +244,10 @@ export function TenantsClient() {
           {/* Step 1 — dynamic requirements */}
           {step === 1 && pack && (
             <div>
-              <h2 className="mb-1 text-lg font-semibold text-white">
+              <h2 className="mb-1 text-lg font-semibold text-slate-950">
                 {pack.emoji} {pack.label} — tell us about the business
               </h2>
-              <p className="mb-4 text-sm text-slate-400">
+              <p className="mb-4 text-sm text-slate-600">
                 These answers are saved to the workspace so the team starts with real context.
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -225,7 +257,7 @@ export function TenantsClient() {
                       <select
                         value={intake[f.key] ?? ""}
                         onChange={(e) => setIntake((s) => ({ ...s, [f.key]: e.target.value }))}
-                        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition focus:border-indigo-400/50 [&>option]:bg-slate-900"
+                        className="w-full rounded-lg border border-blue-100 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
                       >
                         <option value="">Select…</option>
                         {f.options?.map((o) => (
@@ -235,14 +267,14 @@ export function TenantsClient() {
                         ))}
                       </select>
                     ) : f.type === "boolean" ? (
-                      <label className="flex items-center gap-2 py-2 text-sm text-slate-200">
+                      <label className="flex items-center gap-2 py-2 text-sm text-slate-700">
                         <input
                           type="checkbox"
                           checked={intake[f.key] === "yes"}
                           onChange={(e) =>
                             setIntake((s) => ({ ...s, [f.key]: e.target.checked ? "yes" : "no" }))
                           }
-                          className="h-4 w-4 rounded border-white/20 bg-white/5"
+                          className="h-4 w-4 rounded border-blue-200 text-brand-600"
                         />
                         Yes
                       </label>
@@ -279,14 +311,14 @@ export function TenantsClient() {
           {/* Step 2 — org + owner */}
           {step === 2 && pack && (
             <form onSubmit={handleCreate}>
-              <h2 className="mb-1 text-lg font-semibold text-white">Workspace &amp; owner</h2>
-              <p className="mb-4 text-sm text-slate-400">
+              <h2 className="mb-1 text-lg font-semibold text-slate-950">Workspace &amp; owner</h2>
+              <p className="mb-4 text-sm text-slate-600">
                 {pack.label} workspace · {pack.defaults.currency} · {modules.length} modules enabled.
               </p>
 
               {/* Manual module picker — seeded from the pack, fully editable */}
               <div className="mb-5">
-                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
                   Modules for this tenant
                 </p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -299,13 +331,13 @@ export function TenantsClient() {
                         onClick={() => toggleModule(m.key)}
                         className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition ${
                           on
-                            ? "border-indigo-400/50 bg-indigo-500/10 text-white"
-                            : "border-white/10 bg-white/5 text-slate-400 hover:border-white/20"
+                            ? "border-brand-300 bg-blue-50 text-brand-700"
+                            : "border-blue-100 bg-white text-slate-600 hover:border-brand-200 hover:bg-blue-50"
                         }`}
                       >
                         <span
                           className={`flex h-4 w-4 shrink-0 items-center justify-center rounded ${
-                            on ? "bg-indigo-500 text-white" : "bg-white/10"
+                            on ? "bg-brand-600 text-white" : "bg-blue-50"
                           }`}
                         >
                           {on ? "✓" : ""}
@@ -331,7 +363,12 @@ export function TenantsClient() {
                   <AdminInput required type="email" value={org.ownerEmail} onChange={updateOrg("ownerEmail")} />
                 </AdminField>
                 <AdminField label="Owner password">
-                  <AdminInput required type="text" value={org.ownerPassword} onChange={updateOrg("ownerPassword")} />
+                  <PasswordInput
+                    variant="admin"
+                    required
+                    value={org.ownerPassword}
+                    onChange={updateOrg("ownerPassword")}
+                  />
                 </AdminField>
               </div>
               <div className="mt-5 flex gap-2">
@@ -343,16 +380,18 @@ export function TenantsClient() {
             </form>
           )}
 
-          {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+          {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+            </div>
+          </div>
         </Card>
       )}
 
-      {message && <p className="mb-4 text-sm text-emerald-400">{message}</p>}
+      {message && <p className="mb-4 text-sm text-emerald-700">{message}</p>}
 
       <Card className="p-0">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500">
+            <tr className="border-b border-blue-100 text-xs uppercase tracking-wider text-slate-500">
               <th className="px-6 py-3 font-medium">Organization</th>
               <th className="px-6 py-3 font-medium">Industry</th>
               <th className="px-6 py-3 font-medium">Owner</th>
@@ -370,10 +409,10 @@ export function TenantsClient() {
               </tr>
             )}
             {tenants.map((tenant) => (
-              <tr key={tenant.id} className="border-b border-white/5 text-slate-300 last:border-0">
+              <tr key={tenant.id} className="border-b border-blue-50 text-slate-700 last:border-0 hover:bg-blue-50/50">
                 <td className="px-6 py-3">
                   <Link href={`/admin/tenants/${tenant.id}`} className="group">
-                    <div className="font-medium text-white group-hover:text-indigo-300">
+                    <div className="font-medium text-slate-950 group-hover:text-brand-700">
                       {tenant.name}
                     </div>
                     <div className="text-xs text-slate-500">/{tenant.slug}</div>
@@ -388,7 +427,7 @@ export function TenantsClient() {
                 <td className="px-6 py-3">
                   <Link
                     href={`/admin/tenants/${tenant.id}`}
-                    className="text-xs font-medium text-indigo-400 hover:text-indigo-300"
+                    className="text-xs font-medium text-brand-700 hover:text-brand-800"
                   >
                     Manage →
                   </Link>

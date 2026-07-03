@@ -55,8 +55,8 @@ export function SettingsClient() {
       />
 
       <Card className="p-0">
-        <div className="border-b border-white/10 px-6 py-4">
-          <h2 className="text-sm font-semibold text-white">Module catalog</h2>
+        <div className="border-b border-blue-100 px-6 py-4">
+          <h2 className="text-sm font-semibold text-slate-950">Module catalog</h2>
           <p className="mt-1 text-xs text-slate-500">
             Toggling a module here changes the default-on set for tenants created from now on.
           </p>
@@ -64,27 +64,27 @@ export function SettingsClient() {
         {!modules ? (
           <p className="px-6 py-8 text-sm text-slate-500">Loading…</p>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-blue-100">
             {modules.map((mod) => (
               <button
                 key={mod.key}
                 onClick={() => toggle(mod)}
                 disabled={savingKey === mod.key}
-                className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition hover:bg-white/[0.03] disabled:opacity-60"
+                className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left transition hover:bg-blue-50 disabled:opacity-60"
               >
                 <span>
-                  <span className="block text-sm font-medium text-white">{mod.label}</span>
-                  <span className="mt-0.5 block text-xs text-slate-400">{mod.description}</span>
+                  <span className="block text-sm font-medium text-slate-950">{mod.label}</span>
+                  <span className="mt-0.5 block text-xs text-slate-600">{mod.description}</span>
                 </span>
                 <span className="flex shrink-0 items-center gap-3">
                   {mod.effectiveDefault !== mod.defaultEnabled && (
-                    <span className="rounded-full bg-amber-400/10 px-2 py-0.5 text-[10px] font-medium text-amber-300 ring-1 ring-amber-400/20">
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 ring-1 ring-amber-100">
                       overridden
                     </span>
                   )}
                   <span
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
-                      mod.effectiveDefault ? "bg-emerald-500" : "bg-slate-600"
+                      mod.effectiveDefault ? "bg-emerald-500" : "bg-slate-300"
                     }`}
                   >
                     <span

@@ -3,6 +3,7 @@
 import { use, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
+import { PasswordInput } from "@/components/password-input";
 
 export default function AcceptInvitePage({
   params,
@@ -46,9 +47,9 @@ export default function AcceptInvitePage({
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <AuthInput
+        <PasswordInput
+          variant="auth"
           required
-          type="password"
           placeholder="Choose a password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

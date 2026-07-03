@@ -34,10 +34,10 @@ export function PlansClient() {
             <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
               {plan.name}
             </p>
-            <p className="mt-2 text-2xl font-semibold text-white">
+            <p className="mt-2 text-2xl font-semibold text-slate-950">
               {plan.priceMonthly > 0 ? `${adminCurrency.format(plan.priceMonthly)}/mo` : "Free"}
             </p>
-            <div className="mt-4 flex flex-col gap-1 text-sm text-slate-400">
+            <div className="mt-4 flex flex-col gap-1 text-sm text-slate-600">
               {Object.entries(plan.limits).map(([k, v]) => (
                 <span key={k} className="capitalize">
                   {k}: {v === Number.POSITIVE_INFINITY || v > 1e6 ? "Unlimited" : v}

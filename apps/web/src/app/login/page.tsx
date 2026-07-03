@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { AuthShell, AuthInput, AuthButton } from "@/components/auth-shell";
+import { PasswordInput } from "@/components/password-input";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -55,8 +56,8 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <AuthInput
-          type="password"
+        <PasswordInput
+          variant="auth"
           required
           placeholder="Password"
           value={password}

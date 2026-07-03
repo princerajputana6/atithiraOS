@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/brand-logo";
 
 interface AdminNavItem {
   label: string;
@@ -40,15 +41,13 @@ const NAV: AdminNavItem[] = [
 export function AdminSidebar() {
   const pathname = usePathname();
   return (
-    <aside className="hidden w-56 shrink-0 flex-col border-r border-white/10 bg-white/[0.02] lg:flex">
+    <aside className="hidden w-56 shrink-0 flex-col bg-sidebar-gradient lg:flex">
       <Link
         href="/admin"
-        className="flex items-center gap-2 px-5 py-4 text-sm font-semibold tracking-tight text-white"
+        className="flex items-center px-5 py-4"
+        aria-label="Atithira platform admin"
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-400 to-indigo-400 text-xs font-bold text-slate-950">
-          A
-        </span>
-        Platform Admin
+        <BrandLogo className="h-9 w-auto max-w-[9rem] object-contain" priority />
       </Link>
       <nav className="flex flex-col gap-0.5 px-2 py-2">
         {NAV.map((item) => {
@@ -62,8 +61,8 @@ export function AdminSidebar() {
               href={item.href}
               className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
                 active
-                  ? "bg-white/10 font-medium text-white"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  ? "bg-white/20 font-medium text-white shadow-sm"
+                  : "text-blue-50/75 hover:bg-white/10 hover:text-white"
               }`}
             >
               <svg

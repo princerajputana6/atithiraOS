@@ -93,6 +93,10 @@ export function InvoicesClient() {
     await load();
   }
 
+  const totalBilled = invoices.reduce((sum, inv) => sum + inv.total, 0);
+  const paidCount = invoices.filter((inv) => inv.status === "paid").length;
+  const openCount = invoices.filter((inv) => inv.status !== "paid" && inv.status !== "void").length;
+
   return (
     <div>
       <PageHeader
@@ -105,9 +109,34 @@ export function InvoicesClient() {
         }
       />
 
-      {showForm && (
-        <Card className="mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
           <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Total billed</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{money(totalBilled, "INR")}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Open invoices</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{openCount}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Paid</p>
+            <p className="mt-2 text-2xl font-semibold text-emerald-700">{paidCount}</p>
+          </CardBody>
+        </Card>
+      </div>
+
+      {showForm && (
+        <Card className="mb-6 overflow-hidden">
+          <CardBody>
+            <div className="mb-4 rounded-xl bg-blue-50 px-4 py-3">
+              <p className="text-sm font-semibold text-slate-950">New invoice</p>
+              <p className="mt-0.5 text-xs text-slate-600">Create a GST-inclusive invoice and track payment status from the list below.</p>
+            </div>
             <form
               onSubmit={handleSubmit}
               className="grid grid-cols-1 gap-3 sm:grid-cols-3"

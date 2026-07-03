@@ -58,6 +58,9 @@ export function ContactsClient() {
     await load();
   }
 
+  const withEmail = contacts.filter((contact) => contact.email).length;
+  const withPhone = contacts.filter((contact) => contact.phone).length;
+
   return (
     <div>
       <PageHeader
@@ -70,9 +73,34 @@ export function ContactsClient() {
         }
       />
 
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Contacts</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{contacts.length}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">With email</p>
+            <p className="mt-2 text-2xl font-semibold text-brand-700">{withEmail}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">With phone</p>
+            <p className="mt-2 text-2xl font-semibold text-emerald-700">{withPhone}</p>
+          </CardBody>
+        </Card>
+      </div>
+
       {showForm && (
         <Card className="mb-6">
           <CardBody>
+            <div className="mb-4 rounded-xl bg-blue-50 px-4 py-3">
+              <p className="text-sm font-semibold text-slate-950">New contact</p>
+              <p className="mt-0.5 text-xs text-slate-600">Keep customer identity, company, and reachability in one shared record.</p>
+            </div>
             <form
               onSubmit={handleSubmit}
               className="grid grid-cols-1 gap-3 sm:grid-cols-2"

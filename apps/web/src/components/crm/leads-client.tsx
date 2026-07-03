@@ -68,6 +68,11 @@ export function LeadsClient() {
     await load();
   }
 
+  const qualified = leads.filter((lead) => lead.status === "qualified").length;
+  const avgScore = leads.length
+    ? Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / leads.length)
+    : 0;
+
   return (
     <div>
       <PageHeader
@@ -80,9 +85,34 @@ export function LeadsClient() {
         }
       />
 
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Total leads</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{leads.length}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Qualified</p>
+            <p className="mt-2 text-2xl font-semibold text-emerald-700">{qualified}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Avg score</p>
+            <p className="mt-2 text-2xl font-semibold text-brand-700">{avgScore}</p>
+          </CardBody>
+        </Card>
+      </div>
+
       {showForm && (
         <Card className="mb-6">
           <CardBody>
+            <div className="mb-4 rounded-xl bg-blue-50 px-4 py-3">
+              <p className="text-sm font-semibold text-slate-950">Capture a lead</p>
+              <p className="mt-0.5 text-xs text-slate-600">Add source and company context so follow-up feels less like detective work.</p>
+            </div>
             <form
               onSubmit={handleSubmit}
               className="grid grid-cols-1 gap-3 sm:grid-cols-2"

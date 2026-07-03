@@ -300,10 +300,37 @@ export function PagesClient({ industry }: { industry?: string | null }) {
       />
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[220px_1fr]">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Pages</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{pages.length}</p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Published</p>
+            <p className="mt-2 text-2xl font-semibold text-emerald-700">
+              {pages.filter((page) => page.status === "published").length}
+            </p>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody>
+            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Current blocks</p>
+            <p className="mt-2 text-2xl font-semibold text-brand-700">{draft?.blocks.length ?? 0}</p>
+          </CardBody>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
         {/* Page list + create */}
-        <div className="flex flex-col gap-3">
-          <Card>
+        <div className="flex flex-col gap-3 lg:sticky lg:top-20 lg:self-start">
+          <Card className="overflow-hidden p-0">
+            <div className="bg-sidebar-gradient px-5 py-4 text-white">
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-100/70">Site pages</p>
+              <p className="mt-1 text-sm text-blue-50/80">Create pages, pick one, then build it block by block.</p>
+            </div>
             <CardBody>
               <form onSubmit={createPage} className="flex flex-col gap-2">
                 <Field label="New page title">
@@ -313,18 +340,18 @@ export function PagesClient({ industry }: { industry?: string | null }) {
               </form>
             </CardBody>
           </Card>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             {pages.map((p) => (
               <button
                 key={p._id}
                 onClick={() => setActiveId(p._id)}
                 className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition ${
                   activeId === p._id
-                    ? "border-brand-400 bg-brand-50"
-                    : "border-slate-200 bg-white hover:bg-slate-50"
+                    ? "border-brand-300 bg-blue-50 shadow-sm"
+                    : "border-blue-100 bg-white hover:border-brand-200 hover:bg-blue-50"
                 }`}
               >
-                <span className="truncate">
+                <span className="min-w-0 truncate font-medium text-slate-800">
                   {p.title}
                   {p.isHome && <span className="ml-1 text-xs text-slate-400">(home)</span>}
                 </span>
@@ -340,7 +367,14 @@ export function PagesClient({ industry }: { industry?: string | null }) {
         ) : (
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_440px] xl:items-start">
             <div className="flex flex-col gap-4">
-              <Card>
+              <Card className="overflow-hidden p-0">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-blue-100 bg-blue-50 px-5 py-4">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">Page settings</p>
+                    <p className="mt-0.5 text-xs text-slate-600">Metadata, status, templates, and publishing controls.</p>
+                  </div>
+                  <Badge tone={draft.status === "published" ? "green" : "gray"}>{draft.status}</Badge>
+                </div>
                 <CardBody className="flex flex-col gap-3">
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <Field label="Title">
@@ -447,15 +481,18 @@ export function PagesClient({ industry }: { industry?: string | null }) {
                 ))}
               </div>
 
-              <Card>
+              <Card className="overflow-hidden p-0">
+                <div className="border-b border-blue-100 bg-blue-50 px-5 py-4">
+                  <p className="text-sm font-semibold text-slate-950">Block library</p>
+                  <p className="mt-0.5 text-xs text-slate-600">Add a section to the selected page.</p>
+                </div>
                 <CardBody>
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">Add block</p>
                   <div className="flex flex-wrap gap-2">
                     {BLOCK_TYPES.map((b) => (
                       <button
                         key={b.type}
                         onClick={() => addBlock(b.type)}
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+                        className="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-brand-200 hover:bg-blue-50"
                       >
                         + {b.label}
                       </button>
@@ -468,12 +505,12 @@ export function PagesClient({ industry }: { industry?: string | null }) {
             {/* Live preview */}
             <div className="xl:sticky xl:top-4">
               <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">Live preview</p>
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div className="flex items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-3 py-2">
+              <div className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-xl shadow-blue-900/10">
+                <div className="flex items-center gap-1.5 border-b border-blue-100 bg-blue-50 px-3 py-2">
                   <span className="h-2 w-2 rounded-full bg-red-300" />
                   <span className="h-2 w-2 rounded-full bg-amber-300" />
                   <span className="h-2 w-2 rounded-full bg-emerald-300" />
-                  <span className="ml-2 truncate font-mono text-[11px] text-slate-400">/{draft.slug}</span>
+                  <span className="ml-2 truncate font-mono text-[11px] text-slate-500">/{draft.slug}</span>
                 </div>
                 <div className="max-h-[75vh] overflow-y-auto">
                   {draft.blocks.length === 0 ? (
